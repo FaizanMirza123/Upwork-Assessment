@@ -20,7 +20,7 @@ app.post("/paraphrase", async (req, res) => {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer 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",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost:5173",
         "X-Title": "AI-Paraphraser",
