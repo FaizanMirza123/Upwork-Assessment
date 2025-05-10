@@ -6,7 +6,7 @@ import { toast } from "sonner";
 // Function to call the backend API for paraphrasing
 const paraphraseText = async (text: string) => {
   try {
-    const response = await fetch('http://localhost:3001/paraphrase', {  // Directly use the backend API
+    const response = await fetch('http://103.31.104.114:3001/paraphrase', {  // Directly use the backend API
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

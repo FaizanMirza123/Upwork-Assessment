@@ -56,5 +56,5 @@ app.post("/paraphrase", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://103.31.104.114:${PORT}`);
 });
