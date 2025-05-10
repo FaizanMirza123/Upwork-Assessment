@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 // Function to call the backend API for paraphrasing
-const paraphraseText = async (text) => {
+const paraphraseText = async (text: string) => {
   try {
     const response = await fetch('http://localhost:3001/paraphrase', {  // Directly use the backend API
       method: 'POST',
@@ -130,7 +130,7 @@ const TextEditor = () => {
           ref={editorRef}
           className="min-h-[300px] focus:outline-none prose max-w-none"
           contentEditable
-          onInput={(e) => setContent(e.currentTarget.innerText)}
+        
           dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, "<br>") }}
           suppressContentEditableWarning={true}
         />

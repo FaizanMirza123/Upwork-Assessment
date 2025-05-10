@@ -1,69 +1,60 @@
-import express from 'express';
-import fetch from 'node-fetch';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import fetch from "node-fetch";
 
 const app = express();
-const port = 3001;
+const PORT = 3001;
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// OpenRouter API Key
-const OPENROUTER_API_KEY = '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';
-
-// Endpoint for paraphrasing
-app.post('/paraphrase', async (req, res) => {
+app.post("/paraphrase", async (req, res) => {
   const { text } = req.body;
 
   if (!text) {
-    return res.status(400).json({ success: false, error: 'Text is required for paraphrasing.' });
+    return res.status(400).json({ success: false, error: "No text provided" });
   }
 
   try {
-    // Request payload for OpenRouter
-    const requestBody = {
-      model: 'nousresearch/deephermes-3-mistral-24b-preview:free',
-      messages: [
-        {
-          role: 'user',
-          content: `Paraphrase this text: ${text}`,
-        },
-      ],
-    };
-
-    // Fetch request to OpenRouter API
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:5173",
+        "X-Title": "AI-Paraphraser",
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: "nousresearch/deephermes-3-mistral-24b-preview:free",
+        messages: [
+          {
+            role: "user",
+            content: `Paraphrase the following text:\n\n"${text}"`,
+          },
+        ],
+      }),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      return res.status(500).json({ success: false, error: data.error || 'Error paraphrasing text.' });
+      const error = await response.text();
+      throw new Error(`OpenRouter API error: ${error}`);
     }
 
-    // Assuming the result is in the "choices" array from OpenRouter API
-    const paraphrasedText = data.choices[0]?.message.content;
+    const data = await response.json();
+    const paraphrased = data.choices?.[0]?.message?.content;
 
-    if (!paraphrasedText) {
-      return res.status(500).json({ success: false, error: 'No paraphrased text received.' });
+    if (!paraphrased) {
+      return res.status(500).json({ success: false, error: "No response from OpenRouter" });
     }
 
-    res.json({ success: true, result: paraphrasedText });
+    res.json({ success: true, result: paraphrased });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ success: false, error: 'An error occurred while paraphrasing text.' });
+    console.error("Paraphrasing failed:", error.message);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
